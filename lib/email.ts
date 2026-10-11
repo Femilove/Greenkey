@@ -8,7 +8,8 @@ const RESEND_URL = "https://api.resend.com/emails";
  */
 export async function sendEmail(input: { to: string; subject: string; html: string }) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM || "Greenkey <onboarding@resend.dev>";
+  // Hosts like Vercel keep quote marks typed around a value, which Resend rejects as an invalid sender.
+  const from = (process.env.EMAIL_FROM ?? "").trim().replace(/^["']+|["']+$/g, "").trim() || "Air <onboarding@resend.dev>";
 
   if (!apiKey) {
     console.warn(`[email] RESEND_API_KEY not set — would have sent "${input.subject}" to ${input.to}:\n${input.html}`);
@@ -29,7 +30,7 @@ export async function sendEmail(input: { to: string; subject: string; html: stri
 export function passwordResetEmailHtml(resetUrl: string) {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
-      <h2 style="color: #315f39;">Reset your Greenkey password</h2>
+      <h2 style="color: #315f39;">Reset your Air password</h2>
       <p>We received a request to reset your password. This link is valid for 1 hour.</p>
       <p style="margin: 28px 0;">
         <a href="${resetUrl}" style="display: inline-block; padding: 12px 22px; color: #fff; background: #7a9b76; border-radius: 5px; text-decoration: none; font-weight: bold;">
