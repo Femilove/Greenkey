@@ -1,6 +1,6 @@
 import ListingForm from "@/components/dashboard/ListingForm";
 
-export const metadata = { title: "Add a listing | Greenkey" };
+export const metadata = { title: "Add a listing | Avenir" };
 
 export default function NewListingPage() {
   return (

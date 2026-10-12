@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import ListingForm from "@/components/dashboard/ListingForm";
 import { getOwnedListing } from "@/lib/listings";
 
-export const metadata = { title: "Edit listing | Greenkey" };
+export const metadata = { title: "Edit listing | Avenir" };
 
 export default async function EditListingPage({
   params,

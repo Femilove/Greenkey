@@ -3,7 +3,7 @@ import ReviewActions from "@/components/admin/ReviewActions";
 import { getListingsForReview } from "@/lib/listings";
 import { formatNaira } from "@/types/property";
 
-export const metadata = { title: "Admin review | Greenkey" };
+export const metadata = { title: "Admin review | Avenir" };
 
 const shortDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB", {

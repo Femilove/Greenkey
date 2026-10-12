@@ -3,7 +3,7 @@ import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Greenkey",
+  title: "Avenir",
   description: "Find the perfect place. Stress-free.",
 };
 

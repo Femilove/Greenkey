@@ -5,7 +5,7 @@ import DeleteListingButton from "@/components/dashboard/DeleteListingButton";
 import { getOwnerListings } from "@/lib/listings";
 import { formatNaira } from "@/types/property";
 
-export const metadata = { title: "Your listings | Greenkey" };
+export const metadata = { title: "Your listings | Avenir" };
 
 const STATUS_LABEL = {
   pending: "Pending review",

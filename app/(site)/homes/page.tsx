@@ -3,7 +3,7 @@ import PropertyGrid from "@/components/PropertyGrid";
 import { searchListings } from "@/lib/listings";
 import { cityFromSlug, ISO_DATE, nightsBetween } from "@/types/property";
 
-export const metadata = { title: "Homes | Greenkey" };
+export const metadata = { title: "Homes | Avenir" };
 
 type Params = {
   location?: string;

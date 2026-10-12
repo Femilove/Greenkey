@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import AuthForm from "@/components/AuthForm";
 import BecomeOwnerButton from "@/components/BecomeOwnerButton";
 
-export const metadata = { title: "Add a rental | Greenkey" };
+export const metadata = { title: "Add a rental | Avenir" };
 
 export default async function ListingRegisterPage() {
   const session = await auth();

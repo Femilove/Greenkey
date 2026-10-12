@@ -74,7 +74,7 @@ export async function POST(req: Request) {
   const nights = nightsBetween(checkIn, checkOut);
   const amount = discountedPrice(listing) * nights;
   const commission = Math.round(amount * (PLATFORM_COMMISSION_PERCENT / 100));
-  const reference = `Greenkey_${randomUUID().replace(/-/g, "")}`;
+  const reference = `Avenir_${randomUUID().replace(/-/g, "")}`;
 
   await connectDB();
   // Created as "pending_payment" so the dates are soft-held — see isListingAvailable — while the guest pays.

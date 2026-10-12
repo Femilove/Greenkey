@@ -30,7 +30,7 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
   {
     title: "About",
     links: [
-      { label: "About Greenkey", href: "/about" },
+      { label: "About Avenir", href: "/about" },
       { label: "How we work", href: "/how-we-work" },
       { label: "Content guidelines", href: "/content-guidelines" },
     ],

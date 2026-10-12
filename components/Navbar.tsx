@@ -58,7 +58,7 @@ export default function Navbar({
   return (
     <header className="site-header">
       <nav className="navbar" aria-label="Primary navigation">
-        <Link className="nav-icon" href="/" aria-label="Greenkey home">
+        <Link className="nav-icon" href="/" aria-label="Avenir home">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d={HOME_PATH} />
           </svg>

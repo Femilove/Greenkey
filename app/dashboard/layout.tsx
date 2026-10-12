@@ -21,7 +21,7 @@ export default async function DashboardLayout({
           <Link href="/dashboard/payout">Payout details</Link>
         </nav>
         <Link className="dashboard-exit" href="/">
-          &larr; Back to Greenkey
+          &larr; Back to Avenir
         </Link>
       </aside>
       <main className="dashboard-main">{children}</main>

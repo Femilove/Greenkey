@@ -5,7 +5,7 @@ import CancelBookingButton from "@/components/CancelBookingButton";
 import { getUserBookings, type BookingWithListing } from "@/lib/listings";
 import { formatNaira, nightsBetween } from "@/types/property";
 
-export const metadata = { title: "Bookings | Greenkey" };
+export const metadata = { title: "Bookings | Avenir" };
 
 const shortDate = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", {

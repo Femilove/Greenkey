@@ -3,7 +3,7 @@ import connectDB from "@/lib/mongodb";
 import { verifyTransaction } from "@/lib/paystack";
 import Booking from "@/models/Booking";
 
-export const metadata = { title: "Confirming your booking | Greenkey" };
+export const metadata = { title: "Confirming your booking | Avenir" };
 
 export default async function BookingCallbackPage({
   searchParams,

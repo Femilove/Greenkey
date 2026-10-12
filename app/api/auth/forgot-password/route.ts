@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     await user.save();
 
     const resetUrl = `${appUrl(req)}/reset-password?token=${rawToken}`;
-    await sendEmail({ to: email, subject: "Reset your Greenkey password", html: passwordResetEmailHtml(resetUrl) }).catch((err) =>
+    await sendEmail({ to: email, subject: "Reset your Avenir password", html: passwordResetEmailHtml(resetUrl) }).catch((err) =>
       console.error("Failed to send password reset email:", err)
     );
   }
