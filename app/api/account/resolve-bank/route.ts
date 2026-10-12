@@ -17,7 +17,16 @@ export async function POST(req: Request) {
   try {
     const result = await resolveAccountNumber(accountNumber, bankCode);
     return NextResponse.json({ accountName: result.account_name });
-  } catch {
-    return NextResponse.json({ error: "Could not verify that account number. Double-check it and the bank." }, { status: 400 });
+  } catch (err) {
+    // Paystack's own message says why (wrong account/bank pair, test-mode limit, IP restriction, bad key...).
+    const reason = err instanceof Error ? err.message : "Unknown error";
+    console.error("Paystack resolve account failed:", reason);
+    if (reason.includes("PAYSTACK_SECRET_KEY")) {
+      return NextResponse.json({ error: "Payments aren't set up on the server yet (missing Paystack key)." }, { status: 500 });
+    }
+    return NextResponse.json(
+      { error: `Could not verify that account number. Double-check it and the bank. (${reason})` },
+      { status: 400 }
+    );
   }
 }
