@@ -13,6 +13,9 @@ export default function ReviewActions({
   const router = useRouter();
   const [pending, setPending] = useState<"approve" | "reject" | null>(null);
   const [error, setError] = useState("");
+  const [confirming, setConfirming] = useState<"remove" | "delete" | null>(
+    null,
+  );
 
   async function setStatus(next: "approved" | "rejected") {
     setPending(next === "approved" ? "approve" : "reject");
@@ -35,8 +38,7 @@ export default function ReviewActions({
   }
 
   async function remove() {
-    if (!confirm("Permanently delete this listing? This cannot be undone."))
-      return;
+    setConfirming(null);
     setPending("reject");
     setError("");
     try {
@@ -70,11 +72,7 @@ export default function ReviewActions({
             type="button"
             className="review-reject"
             disabled={!!pending}
-            onClick={() =>
-              confirm(
-                "Remove this listing from the site? Existing bookings are kept, and you can approve it again later.",
-              ) && setStatus("rejected")
-            }
+            onClick={() => setConfirming("remove")}
           >
             {pending === "reject" ? "Removing…" : "Remove from site"}
           </button>
@@ -85,7 +83,7 @@ export default function ReviewActions({
             className="review-reject"
             disabled={!!pending}
             aria-label="Delete listing permanently"
-            onClick={remove}
+            onClick={() => setConfirming("delete")}
           >
             🗑 Delete
           </button>
@@ -101,6 +99,41 @@ export default function ReviewActions({
           </button>
         )}
       </div>
+      {confirming && (
+        <div
+          className="review-confirm"
+          role="alertdialog"
+          aria-live="assertive"
+        >
+          <p>
+            {confirming === "remove"
+              ? "Remove this listing from the site? Existing bookings are kept, and you can approve it again later."
+              : "Permanently delete this listing? This cannot be undone."}
+          </p>
+          <div className="review-actions-buttons">
+            <button
+              type="button"
+              className="review-reject"
+              disabled={!!pending}
+              onClick={() => {
+                if (confirming === "remove") {
+                  setConfirming(null);
+                  setStatus("rejected");
+                } else remove();
+              }}
+            >
+              {confirming === "remove" ? "Yes, remove" : "Yes, delete"}
+            </button>
+            <button
+              type="button"
+              className="review-cancel"
+              onClick={() => setConfirming(null)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
       {error && <p className="review-actions-error">{error}</p>}
     </div>
   );

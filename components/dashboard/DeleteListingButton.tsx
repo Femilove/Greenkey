@@ -12,10 +12,11 @@ export default function DeleteListingButton({
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState("");
 
   async function handleDelete() {
-    if (!confirm(`Delete "${name}"? This can't be undone.`)) return;
+    setConfirming(false);
     setPending(true);
     setError("");
     try {
@@ -33,14 +34,37 @@ export default function DeleteListingButton({
 
   return (
     <div className="dashboard-delete">
-      <button
-        type="button"
-        className="dashboard-delete-button"
-        disabled={pending}
-        onClick={handleDelete}
-      >
-        {pending ? "Deleting…" : "Delete"}
-      </button>
+      {!confirming && (
+        <button
+          type="button"
+          className="dashboard-delete-button"
+          disabled={pending}
+          onClick={() => setConfirming(true)}
+        >
+          {pending ? "Deleting…" : "Delete"}
+        </button>
+      )}
+      {confirming && (
+        <div className="review-confirm" role="alertdialog">
+          <p>Delete &ldquo;{name}&rdquo;? This can&apos;t be undone.</p>
+          <div className="review-actions-buttons">
+            <button
+              type="button"
+              className="review-reject"
+              onClick={handleDelete}
+            >
+              Yes, delete
+            </button>
+            <button
+              type="button"
+              className="review-cancel"
+              onClick={() => setConfirming(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
       {error && <p className="dashboard-delete-error">{error}</p>}
     </div>
   );
