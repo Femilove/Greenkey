@@ -57,8 +57,24 @@ export async function PATCH(req: Request, { params }: Ctx) {
 }
 
 export async function DELETE(_req: Request, { params }: Ctx) {
-  const { doc, res } = await ownedListing((await params).id);
-  if (!doc) return res;
+  const { id } = await params;
+  const session = await auth();
+  const isAdmin = session?.user?.role === "admin";
+
+  let doc;
+  if (isAdmin && isValidObjectId(id)) {
+    // Admins may only permanently delete listings that are already rejected (removed from the site).
+    await connectDB();
+    doc = await Listing.findById(id);
+    if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (doc.status !== "rejected" && String(doc.owner) !== session?.user?.id) {
+      return NextResponse.json({ error: "Reject the listing before deleting it." }, { status: 409 });
+    }
+  } else {
+    const owned = await ownedListing(id);
+    if (!owned.doc) return owned.res;
+    doc = owned.doc;
+  }
 
   const today = new Date().toISOString().slice(0, 10);
   if (await Booking.exists({ listing: doc._id, status: "confirmed", checkOut: { $gte: today } })) {

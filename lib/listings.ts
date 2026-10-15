@@ -95,10 +95,10 @@ export interface ReviewListing extends Property {
 }
 
 /** Listings in a review state ("pending" or "rejected"), newest first — for the admin queue. */
-export async function getListingsForReview(status: "pending" | "rejected"): Promise<ReviewListing[]> {
+export async function getListingsForReview(status: "pending" | "rejected" | "approved"): Promise<ReviewListing[]> {
   await connectDB();
   const docs = await Listing.find({ status })
-    .sort({ createdAt: 1 }) // oldest submissions first, so nothing waits forever
+    .sort({ createdAt: status === "approved" ? -1 : 1 }) // pending: oldest first so nothing waits forever
     .populate("owner", "email")
     .lean<(Lean & { createdAt: Date })[]>();
 

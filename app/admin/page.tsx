@@ -3,7 +3,7 @@ import ReviewActions from "@/components/admin/ReviewActions";
 import { getListingsForReview } from "@/lib/listings";
 import { formatNaira } from "@/types/property";
 
-export const metadata = { title: "Admin review | Avenir" };
+export const metadata = { title: "Admin review | Air" };
 
 const shortDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB", {
@@ -18,14 +18,23 @@ export default async function AdminReviewPage({
   searchParams: Promise<{ status?: string }>;
 }) {
   const { status: raw } = await searchParams;
-  const status = raw === "rejected" ? "rejected" : "pending";
+  const status =
+    raw === "rejected"
+      ? "rejected"
+      : raw === "approved"
+        ? "approved"
+        : "pending";
   const listings = await getListingsForReview(status);
 
   return (
     <div className="dashboard-page">
       <div className="dashboard-page-head">
         <h1>
-          {status === "pending" ? "Pending listings" : "Rejected listings"}
+          {status === "pending"
+            ? "Pending listings"
+            : status === "approved"
+              ? "Live listings"
+              : "Rejected listings"}
         </h1>
         <span className="review-count">
           {listings.length} {listings.length === 1 ? "listing" : "listings"}
@@ -37,7 +46,9 @@ export default async function AdminReviewPage({
           <p>
             {status === "pending"
               ? "Nothing waiting for review."
-              : "No rejected listings."}
+              : status === "approved"
+                ? "No live listings."
+                : "No rejected listings."}
           </p>
         </div>
       ) : (
@@ -46,6 +57,7 @@ export default async function AdminReviewPage({
             <article className="review-card" key={l.id}>
               <Image
                 className="dashboard-listing-image"
+                unoptimized={l.image.endsWith(".gif")}
                 src={l.image}
                 alt={l.imageAlt}
                 width={130}
