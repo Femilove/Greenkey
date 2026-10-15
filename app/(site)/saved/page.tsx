@@ -26,18 +26,25 @@ export default function SavedPage() {
             >
               <span aria-hidden="true">♥</span>
             </button>
-            <Image
-              src={property.image}
-              alt={property.imageAlt}
-              width={400}
-              height={190}
-            />
-            <div className="saved-property-details">
-              <h4>{property.type}</h4>
-              <h3>{property.name}</h3>
-              <h4>Starting from</h4>
-              <h3>{formatNaira(discountedPrice(property))}</h3>
-            </div>
+            <Link
+              className="saved-property-link"
+              href={`/listings/${property.id}`}
+              aria-label={`View ${property.name}`}
+            >
+              <Image
+                unoptimized={property.image.endsWith(".gif")}
+                src={property.image}
+                alt={property.imageAlt}
+                width={400}
+                height={190}
+              />
+              <div className="saved-property-details">
+                <h4>{property.type}</h4>
+                <h3>{property.name}</h3>
+                <h4>Starting from</h4>
+                <h3>{formatNaira(discountedPrice(property))}</h3>
+              </div>
+            </Link>
           </article>
         ))}
       </div>
