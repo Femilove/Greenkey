@@ -13,7 +13,9 @@ export default function BookingForm({
 }) {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState(1);
+  const [guestsText, setGuestsText] = useState("1");
+  const clampGuests = (v: string) =>
+    Math.min(maxGuests, Math.max(1, Math.floor(Number(v)) || 1));
   const [status, setStatus] = useState("");
   const [pending, setPending] = useState(false);
   const today = new Date().toISOString().slice(0, 10);
@@ -21,6 +23,12 @@ export default function BookingForm({
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!isLoggedIn) return;
+    if (Number(guestsText) > maxGuests)
+      return setStatus(
+        `This home sleeps up to ${maxGuests} guest${maxGuests === 1 ? "" : "s"}.`,
+      );
+    const guests = clampGuests(guestsText);
+    setGuestsText(String(guests));
     if (!checkIn || !checkOut)
       return setStatus("Choose both a check-in and a check-out date.");
     if (checkOut <= checkIn)
@@ -79,15 +87,22 @@ export default function BookingForm({
           Guests
           <input
             type="number"
+            inputMode="numeric"
             min={1}
             max={maxGuests}
             required
-            value={guests}
-            onChange={(e) =>
-              setGuests(
-                Math.min(maxGuests, Math.max(1, Number(e.target.value) || 1)),
-              )
-            }
+            value={guestsText}
+            onChange={(e) => {
+              setGuestsText(e.target.value);
+              setStatus(
+                Number(e.target.value) > maxGuests
+                  ? `This home sleeps up to ${maxGuests} guest${maxGuests === 1 ? "" : "s"}.`
+                  : "",
+              );
+            }}
+            onBlur={() => {
+              if (Number(guestsText) < 1 || !guestsText) setGuestsText("1");
+            }}
           />
         </label>
       </div>
