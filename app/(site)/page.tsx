@@ -26,8 +26,6 @@ const CATEGORIES = [
 
 export default async function HomePage() {
   const session = await auth();
-  if (!session) return <LandingPage />;
-
   const properties = await getApprovedListings(10);
 
   return (
@@ -39,6 +37,22 @@ export default async function HomePage() {
             <br />
             Stress-Free
           </h1>
+          {!session && (
+            <>
+              <p className="landing-sub">
+                Browse homes freely. Create an account or sign in when
+                you&apos;re ready to book.
+              </p>
+              <div className="landing-cta">
+                <Link className="landing-primary" href="/register">
+                  Create an account
+                </Link>
+                <Link className="landing-secondary" href="/login">
+                  Sign in
+                </Link>
+              </div>
+            </>
+          )}
         </div>
         <div className="image-cluster" aria-label="Featured homes">
           {HERO_IMAGES.map((src) => (
@@ -91,50 +105,6 @@ export default async function HomePage() {
       <WhyChooseUs />
       <StayCarousel />
       <Recommendations />
-    </>
-  );
-}
-
-function LandingPage() {
-  return (
-    <>
-      <section id="all" aria-labelledby="all-heading">
-        <div className="hero-copy">
-          <h1 id="all-heading">
-            Find the perfect place.
-            <br />
-            Stress-Free
-          </h1>
-          <p className="landing-sub">
-            Sign in to search homes, save your favourites and book your stay.
-          </p>
-          <div className="landing-cta">
-            <Link className="landing-primary" href="/register">
-              Create an account
-            </Link>
-            <Link className="landing-secondary" href="/login">
-              Sign in
-            </Link>
-          </div>
-        </div>
-        <div className="image-cluster" aria-label="Featured homes">
-          {HERO_IMAGES.map((src) => (
-            <Image
-              key={src}
-              className="home-image"
-              src={src}
-              alt="Featured rental home"
-              width={216}
-              height={216}
-              style={{ height: "auto" }}
-              priority
-            />
-          ))}
-        </div>
-      </section>
-
-      <section id="services" aria-label="Services" />
-      <WhyChooseUs />
     </>
   );
 }

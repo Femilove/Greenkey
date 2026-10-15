@@ -58,28 +58,26 @@ export default function Navbar({
   return (
     <header className="site-header">
       <nav className="navbar" aria-label="Primary navigation">
-        <Link className="nav-icon" href="/" aria-label="Avenir home">
+        <Link className="nav-icon" href="/" aria-label="Air home">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d={HOME_PATH} />
           </svg>
         </Link>
 
         <div className="nav-links">
-          {NAV_LINKS.filter(({ href }) => isLoggedIn || href !== "/homes").map(
-            ({ label, href }) => {
-              const active = pathname === href;
-              return (
-                <Link
-                  key={label}
-                  className={`nav-link${active ? " active" : ""}`}
-                  href={href}
-                  aria-current={active ? "page" : undefined}
-                >
-                  {label}
-                </Link>
-              );
-            },
-          )}
+          {NAV_LINKS.map(({ label, href }) => {
+            const active = pathname === href;
+            return (
+              <Link
+                key={label}
+                className={`nav-link${active ? " active" : ""}`}
+                href={href}
+                aria-current={active ? "page" : undefined}
+              >
+                {label}
+              </Link>
+            );
+          })}
         </div>
 
         <div className="nav-actions">

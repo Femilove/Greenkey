@@ -5,9 +5,11 @@ import { FormEvent, useState } from "react";
 export default function BookingForm({
   listingId,
   maxGuests,
+  isLoggedIn = false,
 }: {
   listingId: string;
   maxGuests: number;
+  isLoggedIn?: boolean;
 }) {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
@@ -18,6 +20,7 @@ export default function BookingForm({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!isLoggedIn) return;
     if (!checkIn || !checkOut)
       return setStatus("Choose both a check-in and a check-out date.");
     if (checkOut <= checkIn)
@@ -91,9 +94,29 @@ export default function BookingForm({
       <p className="booking-no-refunds">
         No refunds. Payments are final once made.
       </p>
-      <button className="listing-book" type="submit" disabled={pending}>
-        {pending ? "Redirecting to payment…" : "Book & pay now"}
-      </button>
+      {isLoggedIn ? (
+        <button className="listing-book" type="submit" disabled={pending}>
+          {pending ? "Redirecting to payment…" : "Book & pay now"}
+        </button>
+      ) : (
+        <div className="booking-signin">
+          <p>Sign in or create an account to book this home.</p>
+          <div className="landing-cta">
+            <a
+              className="landing-primary"
+              href={`/login?callbackUrl=${encodeURIComponent(`/listings/${listingId}`)}`}
+            >
+              Sign in
+            </a>
+            <a
+              className="landing-secondary"
+              href={`/register?callbackUrl=${encodeURIComponent(`/listings/${listingId}`)}`}
+            >
+              Create an account
+            </a>
+          </div>
+        </div>
+      )}
       {status && (
         <p className="booking-form-status" role="status">
           {status}

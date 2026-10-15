@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PhotoGallery from "@/components/PhotoGallery";
 import BookingForm from "@/components/BookingForm";
+import { auth } from "@/auth";
 import { getListing } from "@/lib/listings";
 import { discountedPrice, formatNaira } from "@/types/property";
 
@@ -11,6 +12,7 @@ export default async function ListingPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const session = await auth();
   const property = await getListing(id);
   if (!property) notFound();
 
@@ -35,6 +37,7 @@ export default async function ListingPage({
       <BookingForm
         listingId={property.id}
         maxGuests={property.maxGuests ?? 1}
+        isLoggedIn={!!session?.user}
       />
     </article>
   );

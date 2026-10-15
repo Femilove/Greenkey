@@ -14,8 +14,11 @@ export default function AuthLayout({
               Support <span aria-hidden="true">⌄</span>
             </summary>
             <div className="support-links">
-              <Link href="#help">Help and support</Link>
-              <Link href="#contact">Contact Us</Link>
+              <Link href="/how-we-work">Help and support</Link>
+              <Link href="/contact">Contact Us</Link>
+              {/* <Link href="/partner-dispute">Partner dispute</Link>
+              <Link href="/terms">Terms of Service</Link>
+              <Link href="/privacy">Privacy Notice</Link> */}
             </div>
           </details>
           <Link className="home-button" href="/" aria-label="Return to home">

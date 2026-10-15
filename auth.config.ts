@@ -13,7 +13,7 @@ export const authConfig = {
       const loggedIn = !!auth?.user;
       const path = nextUrl.pathname;
       if (GUEST_ONLY.includes(path) && loggedIn) return Response.redirect(new URL("/", nextUrl));
-      if (path === "/" || PUBLIC.includes(path)) return true; // "/" is the landing page when logged out
+      if (path === "/" || path === "/homes" || path.startsWith("/listings/") || PUBLIC.includes(path)) return true; // "/" is the landing page when logged out
       return loggedIn; // false => redirected to /login?callbackUrl=...
     },
     jwt({ token, user, trigger, session }) {

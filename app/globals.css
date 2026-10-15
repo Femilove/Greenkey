@@ -562,3 +562,11 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.12; }
 @media (max-width: 640px) {
   .listing-page .photo-gallery img.photo-gallery-image { aspect-ratio: 4 / 3; max-height: none; }
 }
+
+/* ---- Sign-up email code step ---- */
+.signin-card .otp-input { font-size: 1.6rem; letter-spacing: .5em; text-align: center; }
+.auth-verify-actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; margin-top: 16px; }
+.signin-card .auth-link-button { width: auto; margin: 0; padding: 0; color: #5f815d; background: none; border: 0; font-size: .85rem; font-weight: 700; cursor: pointer; }
+.signin-card .auth-link-button:hover, .signin-card .auth-link-button:focus-visible { text-decoration: underline; }
+.signin-card .auth-link-button:disabled { color: #94a3b8; cursor: not-allowed; text-decoration: none; }
+.booking-signin{margin-top:12px}.booking-signin p{margin:0;color:#52616b}.booking-signin .landing-cta{margin-top:10px}
