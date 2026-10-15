@@ -571,11 +571,5 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.12; }
 .signin-card .auth-link-button:disabled { color: #94a3b8; cursor: not-allowed; text-decoration: none; }
 .booking-signin{margin-top:12px}.booking-signin p{margin:0;color:#52616b}.booking-signin .landing-cta{margin-top:10px}
 
-/* iOS Safari zooms the page when a focused input is under 16px; keep inputs at 16px and the booking row inside the screen. */
-.booking-form-row input { font-size: 16px; min-width: 0; max-width: 100%; box-sizing: border-box; }
-@media (max-width: 640px) {
-  .booking-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .booking-form-row label { min-width: 0; }
-  .booking-form-row label:last-child { grid-column: 1 / -1; }
-  .booking-form-row input { width: 100%; }
-}
+/* iOS Safari zooms when a focused input is under 16px — Guests input only. */
+.booking-form-row input[type="number"] { font-size: 16px; }
