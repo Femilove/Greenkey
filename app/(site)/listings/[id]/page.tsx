@@ -5,6 +5,28 @@ import BookingForm from "@/components/BookingForm";
 import { auth } from "@/auth";
 import { getListing } from "@/lib/listings";
 import { discountedPrice, formatNaira } from "@/types/property";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const property = await getListing((await params).id);
+  if (!property)
+    return { title: "Home not found | Avenir", robots: { index: false } };
+  const place = [property.location.area, property.location.city]
+    .filter(Boolean)
+    .join(", ");
+  const title = `${property.name}, ${place} | Avenir`;
+  const description = `${property.type} in ${place} from ${formatNaira(discountedPrice(property))} per night. View photos and book on Avenir.`;
+  return {
+    title,
+    description,
+    alternates: { canonical: `/listings/${property.id}` },
+    openGraph: { title, description, images: [property.image] },
+  };
+}
 
 export default async function ListingPage({
   params,
