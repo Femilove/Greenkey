@@ -17,7 +17,6 @@ export const metadata: Metadata = {
       "Find and book apartments, hotels and homes to rent across Nigeria.",
     images: ["/logo.svg"],
   },
-  alternates: { canonical: "/" },
 };
 
 export default function RootLayout({

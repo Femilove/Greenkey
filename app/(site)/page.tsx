@@ -24,6 +24,8 @@ const CATEGORIES = [
   },
 ];
 
+export const metadata = { alternates: { canonical: "/" } };
+
 export default async function HomePage() {
   const session = await auth();
   const properties = await getApprovedListings(10);
