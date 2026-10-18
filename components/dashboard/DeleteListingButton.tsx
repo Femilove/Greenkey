@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function DeleteListingButton({
   id,
@@ -34,37 +35,22 @@ export default function DeleteListingButton({
 
   return (
     <div className="dashboard-delete">
-      {!confirming && (
-        <button
-          type="button"
-          className="dashboard-delete-button"
-          disabled={pending}
-          onClick={() => setConfirming(true)}
-        >
-          {pending ? "Deleting…" : "Delete"}
-        </button>
-      )}
-      {confirming && (
-        <div className="review-confirm" role="alertdialog">
-          <p>Delete &ldquo;{name}&rdquo;? This can&apos;t be undone.</p>
-          <div className="review-actions-buttons">
-            <button
-              type="button"
-              className="review-reject"
-              onClick={handleDelete}
-            >
-              Yes, delete
-            </button>
-            <button
-              type="button"
-              className="review-cancel"
-              onClick={() => setConfirming(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+      <button
+        type="button"
+        className="dashboard-delete-button"
+        disabled={pending}
+        onClick={() => setConfirming(true)}
+      >
+        {pending ? "Deleting…" : "Delete"}
+      </button>
+      <ConfirmDialog
+        open={confirming}
+        title="Delete this listing?"
+        message={`"${name}" will be permanently deleted. This can't be undone.`}
+        confirmLabel="Yes, delete"
+        onCancel={() => setConfirming(false)}
+        onConfirm={handleDelete}
+      />
       {error && <p className="dashboard-delete-error">{error}</p>}
     </div>
   );

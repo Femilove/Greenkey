@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function CancelBookingButton({ id }: { id: string }) {
   const router = useRouter();
@@ -26,26 +27,6 @@ export default function CancelBookingButton({ id }: { id: string }) {
     }
   }
 
-  if (confirming) {
-    return (
-      <div className="review-confirm" role="alertdialog">
-        <p>Cancel this booking?</p>
-        <div className="review-actions-buttons">
-          <button type="button" className="review-reject" onClick={cancel}>
-            Yes, cancel
-          </button>
-          <button
-            type="button"
-            className="review-cancel"
-            onClick={() => setConfirming(false)}
-          >
-            Keep booking
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <button
@@ -56,6 +37,15 @@ export default function CancelBookingButton({ id }: { id: string }) {
       >
         {pending ? "Cancelling…" : "Cancel"}
       </button>
+      <ConfirmDialog
+        open={confirming}
+        title="Cancel this booking?"
+        message="Your dates will be released."
+        confirmLabel="Yes, cancel"
+        cancelLabel="Keep booking"
+        onCancel={() => setConfirming(false)}
+        onConfirm={cancel}
+      />
       {error && (
         <p className="dashboard-delete-error" role="alert">
           {error}

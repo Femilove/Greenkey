@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function ReviewActions({
   id,
@@ -99,41 +100,25 @@ export default function ReviewActions({
           </button>
         )}
       </div>
-      {confirming && (
-        <div
-          className="review-confirm"
-          role="alertdialog"
-          aria-live="assertive"
-        >
-          <p>
-            {confirming === "remove"
-              ? "Remove this listing from the site? Existing bookings are kept, and you can approve it again later."
-              : "Permanently delete this listing? This cannot be undone."}
-          </p>
-          <div className="review-actions-buttons">
-            <button
-              type="button"
-              className="review-reject"
-              disabled={!!pending}
-              onClick={() => {
-                if (confirming === "remove") {
-                  setConfirming(null);
-                  setStatus("rejected");
-                } else remove();
-              }}
-            >
-              {confirming === "remove" ? "Yes, remove" : "Yes, delete"}
-            </button>
-            <button
-              type="button"
-              className="review-cancel"
-              onClick={() => setConfirming(null)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={confirming !== null}
+        title={
+          confirming === "remove" ? "Remove from site?" : "Delete listing?"
+        }
+        message={
+          confirming === "remove"
+            ? "It will be hidden from the site. Existing bookings are kept, and you can approve it again later."
+            : "This listing will be permanently deleted. This cannot be undone."
+        }
+        confirmLabel={confirming === "remove" ? "Yes, remove" : "Yes, delete"}
+        onCancel={() => setConfirming(null)}
+        onConfirm={() => {
+          if (confirming === "remove") {
+            setConfirming(null);
+            setStatus("rejected");
+          } else remove();
+        }}
+      />
       {error && <p className="review-actions-error">{error}</p>}
     </div>
   );
