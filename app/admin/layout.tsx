@@ -20,7 +20,7 @@ export default async function AdminLayout({
           <Link href="/admin?status=rejected">Rejected listings</Link>
         </nav>
         <Link className="dashboard-exit" href="/">
-          &larr; Back to Air
+          &larr; Back to Avenir
         </Link>
       </aside>
       <main className="dashboard-main">{children}</main>

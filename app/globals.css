@@ -585,3 +585,12 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.12; }
 .confirm-dialog-cancel { color: #31423a; background: #fff; border: 1px solid #cbd5d1; }
 .confirm-dialog-confirm { color: #fff; background: #c0392b; border: 1px solid #c0392b; }
 .confirm-dialog-confirm:hover { background: #a93226; }
+
+.nav-logo { display: inline-flex; align-items: center; gap: 10px; color: #18222d; text-decoration: none; }
+.nav-logo svg { width: 38px; height: 38px; flex: 0 0 auto; transition: transform 160ms ease; }
+.nav-logo:hover svg, .nav-logo:focus-visible svg { transform: translateY(-1px); }
+.nav-logo-text { font-size: 1.35rem; font-weight: 700; letter-spacing: .3px; }
+@media (max-width: 640px) {
+  .nav-logo svg { width: 36px; height: 36px; }
+  .nav-logo-text { display: none; }
+}

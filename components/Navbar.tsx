@@ -21,9 +21,6 @@ const ACCOUNT_LINKS = [
   { label: "Promo codes", href: "/promo-codes" },
 ];
 
-const HOME_PATH =
-  "M3 11.5 12 4l9 7.5v8.25a.75.75 0 0 1-.75.75h-5.5v-5.75h-5.5v5.75h-5.5a.75.75 0 0 1-.75-.75V11.5Z";
-
 export default function Navbar({
   isLoggedIn = false,
   role,
@@ -58,10 +55,20 @@ export default function Navbar({
   return (
     <header className="site-header">
       <nav className="navbar" aria-label="Primary navigation">
-        <Link className="nav-icon" href="/" aria-label="Air home">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d={HOME_PATH} />
+        <Link className="nav-logo" href="/" aria-label="Avenir home">
+          <svg viewBox="0 0 96 96" aria-hidden="true">
+            <rect width="96" height="96" rx="24" fill="#4f7350" />
+            <path
+              d="M24 66 L48 30 L72 66"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="48" cy="58" r="5.5" fill="#fff" />
           </svg>
+          <span className="nav-logo-text">avenir</span>
         </Link>
 
         <div className="nav-links">
