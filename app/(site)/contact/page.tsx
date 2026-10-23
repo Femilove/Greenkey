@@ -4,6 +4,9 @@ import { LEGAL } from "@/lib/legal";
 
 export const metadata = {
   title: `Contact customer service | ${LEGAL.siteName}`,
+  description:
+    "Need help with a booking, a listing or a payment? Contact the Avenir customer service team.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {

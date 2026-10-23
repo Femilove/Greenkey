@@ -2,7 +2,12 @@ import Link from "next/link";
 import LegalPage from "@/components/LegalPage";
 import { LEGAL } from "@/lib/legal";
 
-export const metadata = { title: `Privacy Notice | ${LEGAL.siteName}` };
+export const metadata = {
+  title: `Privacy Notice | ${LEGAL.siteName}`,
+  description:
+    "How Avenir collects, uses and protects your personal information when you use the platform.",
+  alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPage() {
   const { siteName, companyName, contactEmail } = LEGAL;

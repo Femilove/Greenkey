@@ -12,6 +12,8 @@ export interface IBooking {
   amount: number; // total paid, in NGN (naira, not kobo)
   commission: number; // the platform's cut, in NGN
   paystackReference: string;
+  // Set when a late payment clashed with other dates: the booking was not confirmed and the guest must be refunded.
+  refundNeeded?: boolean;
 }
 
 const BookingSchema = new Schema<IBooking>(
@@ -25,6 +27,7 @@ const BookingSchema = new Schema<IBooking>(
     amount: { type: Number, required: true },
     commission: { type: Number, required: true, default: 0 },
     paystackReference: { type: String, required: true, unique: true },
+    refundNeeded: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

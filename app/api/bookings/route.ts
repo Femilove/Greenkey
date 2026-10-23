@@ -55,10 +55,10 @@ export async function POST(req: Request) {
   if (guests < 1 || guests > listing.maxGuests) {
     return NextResponse.json({ error: `This home sleeps up to ${listing.maxGuests} guests.` }, { status: 400 });
   }
-  if (!(await isListingAvailable(listingId, checkIn, checkOut))) {
+  if (!(await isListingAvailable(listingId, checkIn, checkOut, session.user.id))) {
     const fmt = (iso: string) =>
       new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
-    const ranges = await getBookedRanges(listingId);
+    const ranges = await getBookedRanges(listingId, 8, session.user.id);
     const list = ranges.map((r) => `• ${fmt(r.from)} to ${fmt(r.to)}`).join("\n");
     return NextResponse.json(
       {
@@ -91,7 +91,10 @@ export async function POST(req: Request) {
     listing: listingId,
     checkIn: { $lt: checkOut },
     checkOut: { $gt: checkIn },
-    $or: [{ status: "confirmed" }, { status: "pending_payment", createdAt: { $gte: holdCutoff } }],
+    $or: [
+      { status: "confirmed" },
+      { status: "pending_payment", createdAt: { $gte: holdCutoff }, user: { $ne: session.user.id } }, // not the guest's own earlier attempt
+    ],
   });
   if (earlier) {
     await Booking.deleteOne({ _id: created._id });

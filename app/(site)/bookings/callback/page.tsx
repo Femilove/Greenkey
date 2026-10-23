@@ -1,5 +1,6 @@
 import Link from "next/link";
 import connectDB from "@/lib/mongodb";
+import { confirmPaidBooking } from "@/lib/confirmBooking";
 import { verifyTransaction } from "@/lib/paystack";
 import Booking from "@/models/Booking";
 
@@ -41,6 +42,9 @@ export default async function BookingCallbackPage({
       />
     );
   }
+  if (booking.status === "cancelled" && booking.refundNeeded) {
+    return <RefundResult />;
+  }
   if (booking.status === "cancelled") {
     return (
       <Result
@@ -65,8 +69,8 @@ export default async function BookingCallbackPage({
       );
     }
     if (result.status === "success") {
-      booking.status = "confirmed";
-      await booking.save();
+      if ((await confirmPaidBooking(booking)) === "conflict")
+        return <RefundResult />;
       return (
         <Success
           listingName={(booking.listing as unknown as { name: string })?.name}
@@ -89,6 +93,15 @@ export default async function BookingCallbackPage({
       />
     );
   }
+}
+
+function RefundResult() {
+  return (
+    <Result
+      title="Those dates were taken"
+      message="Your payment went through after the 30-minute hold on these dates ended, and someone else has booked them. This stay was not confirmed and you will be refunded. Please contact support with your payment reference if you don't hear from us."
+    />
+  );
 }
 
 function Success({ listingName }: { listingName?: string }) {

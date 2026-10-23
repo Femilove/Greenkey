@@ -3,7 +3,12 @@ import PropertyGrid from "@/components/PropertyGrid";
 import { searchListings } from "@/lib/listings";
 import { cityFromSlug, ISO_DATE, nightsBetween } from "@/types/property";
 
-export const metadata = { title: "Homes | Avenir" };
+export const metadata = {
+  title: "Homes for rent in Nigeria | Avenir",
+  description:
+    "Browse apartments, hotels and homes to rent in Lagos, Abuja, Ibadan, Enugu, Port Harcourt and Benin. Pick your dates and book on Avenir.",
+  alternates: { canonical: "/homes" },
+};
 
 type Params = {
   location?: string;

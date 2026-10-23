@@ -2,7 +2,12 @@ import Link from "next/link";
 import LegalPage from "@/components/LegalPage";
 import { LEGAL } from "@/lib/legal";
 
-export const metadata = { title: `About ${LEGAL.siteName}` };
+export const metadata = {
+  title: `About ${LEGAL.siteName}`,
+  description:
+    "Avenir helps people find and book comfortable homes across Nigeria, and helps property owners reach guests and get paid securely.",
+  alternates: { canonical: "/about" },
+};
 
 export default function AboutPage() {
   return (

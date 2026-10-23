@@ -19,6 +19,7 @@ export default async function DashboardLayout({
         <p className="dashboard-brand">Your listings</p>
         <nav aria-label="Dashboard navigation">
           <Link href="/dashboard">My listings</Link>
+          <Link href="/dashboard/bookings">Bookings</Link>
           <Link href="/dashboard/listings/new">Add a listing</Link>
           <Link href="/dashboard/payout">Payout details</Link>
         </nav>

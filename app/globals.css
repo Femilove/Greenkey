@@ -594,3 +594,56 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.12; }
   .nav-logo svg { width: 36px; height: 36px; }
   .nav-logo-text { display: none; }
 }
+
+/* Owner dashboard: bookings per listing */
+.owner-bookings-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
+.owner-bookings-summary div { display: flex; flex-direction: column; gap: 2px; padding: 16px 18px; background: #fff; border: 1px solid #d9e1e8; }
+.owner-bookings-summary strong { font-size: 1.7rem; color: #315f39; line-height: 1.1; }
+.owner-bookings-summary span { font-size: .82rem; color: #52616b; font-weight: 600; }
+.owner-booking-groups { display: flex; flex-direction: column; gap: 18px; }
+.owner-booking-group { background: #fff; border: 1px solid #d9e1e8; border-left: 4px solid #5f815d; padding: 18px; }
+.owner-booking-group header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.owner-booking-group h2 { margin: 0; font-size: 1.1rem; }
+.owner-booking-group header p { margin: 2px 0 0; font-size: .85rem; color: #52616b; }
+.owner-booking-count { font-size: .78rem; font-weight: 700; color: #315f39; background: #e8f1e6; padding: 5px 12px; border-radius: 999px; white-space: nowrap; }
+.owner-booking-empty { margin: 0; padding: 12px 0 2px; color: #52616b; font-size: .92rem; }
+.owner-booking-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.owner-booking-row { display: grid; grid-template-columns: 1.3fr 1.2fr auto; gap: 14px; align-items: center; padding: 12px 0; border-top: 1px solid #e6ecef; }
+.owner-booking-row:first-child { border-top: 0; }
+.owner-booking-dates, .owner-booking-guest, .owner-booking-side { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.owner-booking-dates span, .owner-booking-guest span:last-child { font-size: .82rem; color: #52616b; }
+.owner-booking-guest span:first-child { overflow-wrap: anywhere; font-size: .92rem; }
+.owner-booking-side { align-items: flex-end; }
+.owner-booking-pill { padding: 4px 11px; border-radius: 999px; font-size: .74rem; font-weight: 700; white-space: nowrap; }
+.owner-booking-pill-ok { background: #e8f1e6; color: #315f39; }
+.owner-booking-pill-now { background: #fdf0c8; color: #7a5a14; }
+.owner-booking-pill-wait { background: #eef1f4; color: #52616b; }
+.owner-booking-past { margin-top: 10px; border-top: 1px solid #e6ecef; padding-top: 10px; }
+.owner-booking-past summary { cursor: pointer; font-size: .88rem; font-weight: 700; color: #5f815d; }
+@media (max-width: 640px) {
+  .owner-booking-row { grid-template-columns: 1fr; gap: 8px; }
+  .owner-booking-side { flex-direction: row; align-items: center; justify-content: space-between; }
+  .owner-bookings-summary { gap: 8px; }
+}
+.dashboard-listing-next { margin: 4px 0 0; font-size: .82rem; font-weight: 600; color: #5f815d; }
+
+/* Owner dashboard: block dates */
+.owner-block-form { margin: 0 0 14px; padding: 14px; background: #f6f8f5; border: 1px dashed #b9c9b5; }
+.owner-block-title { margin: 0 0 10px; font-size: .86rem; font-weight: 700; color: #315f39; }
+.owner-block-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: end; }
+.owner-block-fields label { display: flex; flex-direction: column; gap: 4px; font-size: .78rem; font-weight: 700; color: #52616b; }
+.owner-block-fields input { font-size: 16px; padding: 9px 10px; border: 1px solid #cbd5d1; background: #fff; min-width: 0; }
+.owner-block-note { grid-column: 1 / -1; }
+.owner-block-fields button { grid-column: 1 / -1; padding: 11px 16px; background: #5f815d; color: #fff; border: 0; font-weight: 700; cursor: pointer; }
+.owner-block-fields button:disabled { opacity: .6; cursor: not-allowed; }
+.owner-block-ok { margin: 10px 0 0; font-size: .86rem; color: #315f39; font-weight: 600; }
+.owner-block-error { margin: 8px 0 0; font-size: .85rem; color: #b42318; font-weight: 600; }
+.owner-block-list { margin-bottom: 8px; border-bottom: 1px solid #e6ecef; }
+.owner-booking-pill-block { background: #fde8e4; color: #8a2f1d; }
+.owner-block-remove { background: none; border: 0; padding: 0; color: #5f815d; font-size: .82rem; font-weight: 700; cursor: pointer; }
+.owner-block-remove:hover { text-decoration: underline; }
+@media (min-width: 700px) {
+  .owner-block-fields { grid-template-columns: 1fr 1fr 1.4fr auto; }
+  .owner-block-note { grid-column: auto; }
+  .owner-block-fields button { grid-column: auto; }
+}

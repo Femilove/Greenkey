@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import connectDB from "@/lib/mongodb";
 import { getListing, parseListingInput } from "@/lib/listings";
+import BlockedDate from "@/models/BlockedDate";
 import Booking from "@/models/Booking";
 import Listing from "@/models/Listing";
 
@@ -80,6 +81,7 @@ export async function DELETE(_req: Request, { params }: Ctx) {
   if (await Booking.exists({ listing: doc._id, status: "confirmed", checkOut: { $gte: today } })) {
     return NextResponse.json({ error: "This listing has upcoming bookings." }, { status: 409 });
   }
+  await BlockedDate.deleteMany({ listing: doc._id });
   await doc.deleteOne();
   return NextResponse.json({ ok: true });
 }

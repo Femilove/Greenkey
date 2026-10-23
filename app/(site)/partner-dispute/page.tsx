@@ -2,7 +2,12 @@ import Link from "next/link";
 import LegalPage from "@/components/LegalPage";
 import { LEGAL } from "@/lib/legal";
 
-export const metadata = { title: `Partner dispute | ${LEGAL.siteName}` };
+export const metadata = {
+  title: `Partner dispute | ${LEGAL.siteName}`,
+  description:
+    "How property owners and partners can raise and resolve a dispute with Avenir.",
+  alternates: { canonical: "/partner-dispute" },
+};
 
 export default function PartnerDisputePage() {
   return (

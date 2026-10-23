@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import { isValidWebhookSignature } from "@/lib/paystack";
+import { confirmPaidBooking } from "@/lib/confirmBooking";
 import Booking from "@/models/Booking";
 
 /**
@@ -27,8 +28,7 @@ export async function POST(req: Request) {
       const paidKobo = Number(event.data?.amount);
       const booking = await Booking.findOne({ paystackReference: reference, status: "pending_payment" });
       if (booking && paidKobo >= Math.round(booking.amount * 100)) {
-        booking.status = "confirmed";
-        await booking.save();
+        await confirmPaidBooking(booking);
       } else if (booking) {
         console.error(`Paystack amount mismatch for ${reference}: paid ${paidKobo} kobo, expected ${Math.round(booking.amount * 100)}`);
       }

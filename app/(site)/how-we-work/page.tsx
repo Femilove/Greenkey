@@ -2,7 +2,12 @@ import Link from "next/link";
 import LegalPage from "@/components/LegalPage";
 import { LEGAL } from "@/lib/legal";
 
-export const metadata = { title: `How we work | ${LEGAL.siteName}` };
+export const metadata = {
+  title: `How we work | ${LEGAL.siteName}`,
+  description:
+    "See how Avenir works: guests browse and book verified homes, owners list properties for review, and payments are handled securely.",
+  alternates: { canonical: "/how-we-work" },
+};
 
 export default function HowWeWorkPage() {
   return (

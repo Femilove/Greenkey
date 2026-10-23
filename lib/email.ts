@@ -41,3 +41,14 @@ export function passwordResetEmailHtml(resetUrl: string) {
     </div>
   `;
 }
+
+export function signupOtpEmailHtml(code: string) {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+      <h2 style="color: #315f39;">Confirm your email</h2>
+      <p>Use this code to finish creating your Avenir account. It is valid for 10 minutes.</p>
+      <p style="margin: 28px 0; font-size: 34px; font-weight: bold; letter-spacing: 8px; color: #18222d;">${code}</p>
+      <p style="color: #64748b; font-size: 13px;">If you didn't try to sign up, you can safely ignore this email. Never share this code with anyone.</p>
+    </div>
+  `;
+}

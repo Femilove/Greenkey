@@ -1,5 +1,6 @@
 import { isValidObjectId, type Types } from "mongoose";
 import connectDB from "@/lib/mongodb";
+import BlockedDate from "@/models/BlockedDate";
 import Booking, { type IBooking } from "@/models/Booking";
 import Listing, { type IListing } from "@/models/Listing";
 import { CITIES, MAX_PHOTOS, type City, type ListingStatus, type Property } from "@/types/property";
@@ -53,7 +54,10 @@ export async function searchListings(f: SearchFilters = {}): Promise<Property[]>
       checkOut: { $gt: f.checkIn },
       $or: [{ status: "confirmed" }, { status: "pending_payment", createdAt: { $gte: holdCutoff } }],
     });
-    if (taken.length) query._id = { $nin: taken };
+    // Dates the owner blocked themselves (own stay, offline booking) hide the listing too.
+    const blocked = await BlockedDate.distinct("listing", { checkIn: { $lt: f.checkOut }, checkOut: { $gt: f.checkIn } });
+    const unavailable = [...taken, ...blocked];
+    if (unavailable.length) query._id = { $nin: unavailable };
   }
 
   const docs = await Listing.find(query).sort({ createdAt: -1 }).limit(f.limit ?? 50).lean<Lean[]>();
@@ -113,33 +117,52 @@ export async function getListingsForReview(status: "pending" | "rejected" | "app
   });
 }
 /** True if no confirmed (or recently-started, still-paying) booking overlaps [checkIn, checkOut). */
-export async function isListingAvailable(listingId: string, checkIn: string, checkOut: string) {
+/**
+ * `ignoreHoldsOfUser`: a guest's own unfinished checkout (they closed Paystack and are trying
+ * again) must not block them, so their pending holds are skipped. Other guests are still blocked.
+ */
+export async function isListingAvailable(listingId: string, checkIn: string, checkOut: string, ignoreHoldsOfUser?: string) {
   await connectDB();
   const holdCutoff = new Date(Date.now() - 30 * 60 * 1000); // abandoned checkouts stop blocking dates after 30 min
   const clash = await Booking.exists({
     listing: listingId,
     checkIn: { $lt: checkOut },
     checkOut: { $gt: checkIn },
-    $or: [{ status: "confirmed" }, { status: "pending_payment", createdAt: { $gte: holdCutoff } }],
+    $or: [
+      { status: "confirmed" },
+      { status: "pending_payment", createdAt: { $gte: holdCutoff }, ...(ignoreHoldsOfUser ? { user: { $ne: ignoreHoldsOfUser } } : {}) },
+    ],
   });
-  return !clash;
+  if (clash) return false;
+  return !(await BlockedDate.exists({ listing: listingId, checkIn: { $lt: checkOut }, checkOut: { $gt: checkIn } }));
 }
 
 /** Upcoming date ranges already taken for a listing (confirmed, or payment started in the last 30 min), soonest first. */
-export async function getBookedRanges(listingId: string, limit = 8) {
+export async function getBookedRanges(listingId: string, limit = 8, ignoreHoldsOfUser?: string) {
   await connectDB();
   const today = new Date().toISOString().slice(0, 10);
   const holdCutoff = new Date(Date.now() - 30 * 60 * 1000);
   const docs = await Booking.find({
     listing: listingId,
     checkOut: { $gt: today },
-    $or: [{ status: "confirmed" }, { status: "pending_payment", createdAt: { $gte: holdCutoff } }],
+    $or: [
+      { status: "confirmed" },
+      { status: "pending_payment", createdAt: { $gte: holdCutoff }, ...(ignoreHoldsOfUser ? { user: { $ne: ignoreHoldsOfUser } } : {}) },
+    ],
   })
     .sort({ checkIn: 1 })
     .limit(limit)
     .select("checkIn checkOut")
     .lean<{ checkIn: string; checkOut: string }[]>();
-  return docs.map((d) => ({ from: d.checkIn, to: d.checkOut }));
+  const blocks = await BlockedDate.find({ listing: listingId, checkOut: { $gt: today } })
+    .sort({ checkIn: 1 })
+    .limit(limit)
+    .select("checkIn checkOut")
+    .lean<{ checkIn: string; checkOut: string }[]>();
+  return [...docs, ...blocks]
+    .map((d) => ({ from: d.checkIn, to: d.checkOut }))
+    .sort((a, b) => a.from.localeCompare(b.from))
+    .slice(0, limit);
 }
 
 /** A listing plus what's needed to charge for it: the owner's Paystack subaccount and email. */

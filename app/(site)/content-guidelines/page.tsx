@@ -2,7 +2,12 @@ import Link from "next/link";
 import LegalPage from "@/components/LegalPage";
 import { LEGAL } from "@/lib/legal";
 
-export const metadata = { title: `Content guidelines | ${LEGAL.siteName}` };
+export const metadata = {
+  title: `Content guidelines | ${LEGAL.siteName}`,
+  description:
+    "Read Avenir's content guidelines for listings: what photos, descriptions and details owners can post on the platform.",
+  alternates: { canonical: "/content-guidelines" },
+};
 
 export default function ContentGuidelinesPage() {
   return (

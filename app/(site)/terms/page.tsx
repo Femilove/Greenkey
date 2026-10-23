@@ -2,7 +2,12 @@ import Link from "next/link";
 import LegalPage from "@/components/LegalPage";
 import { LEGAL } from "@/lib/legal";
 
-export const metadata = { title: `Terms of Service | ${LEGAL.siteName}` };
+export const metadata = {
+  title: `Terms of Service | ${LEGAL.siteName}`,
+  description:
+    "The terms that apply when you browse, book or list a home on Avenir, including bookings, payments and cancellations.",
+  alternates: { canonical: "/terms" },
+};
 
 export default function TermsPage() {
   const { siteName, companyName, contactEmail, country } = LEGAL;

@@ -4,7 +4,7 @@ import Link from "next/link";
 import PasswordInput from "./PasswordInput";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 export type AuthMode =
   | "login"
@@ -53,6 +53,82 @@ export default function AuthForm({ mode }: { mode: AuthMode }) {
   const [status, setStatus] = useState("");
   const [pending, setPending] = useState(false);
   const router = useRouter();
+  // Set once the sign-up details are accepted and a code has been emailed.
+  const [verifying, setVerifying] = useState<{
+    email: string;
+    password: string;
+  } | null>(null);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  function finishSignIn() {
+    const cb =
+      new URLSearchParams(window.location.search).get("callbackUrl") ??
+      (mode.startsWith("listing") ? "/dashboard" : "/");
+    router.push(cb.startsWith("/") && !cb.startsWith("//") ? cb : "/");
+    router.refresh();
+  }
+
+  async function handleVerify(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!verifying) return;
+    const code = String(new FormData(e.currentTarget).get("code") ?? "").trim();
+    setPending(true);
+    setStatus("");
+    try {
+      const res = await fetch("/api/register/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: verifying.email, code }),
+      });
+      if (!res.ok) {
+        setStatus(
+          (await res.json().catch(() => null))?.error ??
+            "Could not verify that code.",
+        );
+        return;
+      }
+      const result = await signIn("credentials", {
+        email: verifying.email,
+        password: verifying.password,
+        redirect: false,
+      });
+      if (result?.error) {
+        setStatus("Your account is ready, but sign-in failed. Try signing in.");
+        return;
+      }
+      finishSignIn();
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function handleResend() {
+    if (!verifying || cooldown > 0) return;
+    setPending(true);
+    setStatus("");
+    try {
+      const res = await fetch("/api/register/resend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: verifying.email }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setStatus(data?.error ?? "Could not send a new code.");
+        return;
+      }
+      setCooldown(60);
+      setStatus("A new code is on its way. Check your inbox and spam folder.");
+    } finally {
+      setPending(false);
+    }
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -79,6 +155,11 @@ export default function AuthForm({ mode }: { mode: AuthMode }) {
           );
           return;
         }
+        // Account isn't created yet: ask for the code that was just emailed.
+        setVerifying({ email: email.toLowerCase().trim(), password });
+        setCooldown(60);
+        setStatus("");
+        return;
       }
       const result = await signIn("credentials", {
         email,
@@ -93,11 +174,7 @@ export default function AuthForm({ mode }: { mode: AuthMode }) {
         );
         return;
       }
-      const cb =
-        new URLSearchParams(window.location.search).get("callbackUrl") ??
-        (mode.startsWith("listing") ? "/dashboard" : "/");
-      router.push(cb.startsWith("/") && !cb.startsWith("//") ? cb : "/");
-      router.refresh();
+      finishSignIn();
     } finally {
       setPending(false);
     }
@@ -113,8 +190,64 @@ export default function AuthForm({ mode }: { mode: AuthMode }) {
     });
   }
 
+  if (verifying) {
+    return (
+      <form key="verify" className="signin-card" onSubmit={handleVerify}>
+        <p className="eyebrow">ONE LAST STEP</p>
+        <h2>Check your email</h2>
+        <p className="intro">
+          We sent a 6-digit code to <strong>{verifying.email}</strong>. Enter it
+          below to finish creating your account.
+        </p>
+
+        <label htmlFor="code">Verification code</label>
+        <input
+          id="code"
+          name="code"
+          className="otp-input"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          pattern="\d{6}"
+          maxLength={6}
+          placeholder="000000"
+          required
+          autoFocus
+        />
+
+        <button type="submit" disabled={pending}>
+          {pending ? "Checking…" : "Verify and create account"}
+        </button>
+
+        <div className="auth-verify-actions">
+          <button
+            type="button"
+            className="auth-link-button"
+            disabled={pending || cooldown > 0}
+            onClick={handleResend}
+          >
+            {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
+          </button>
+          <button
+            type="button"
+            className="auth-link-button"
+            onClick={() => {
+              setVerifying(null);
+              setStatus("");
+              setCooldown(0);
+            }}
+          >
+            Use a different email
+          </button>
+        </div>
+        <p className="form-status" role="status">
+          {status}
+        </p>
+      </form>
+    );
+  }
+
   return (
-    <form className="signin-card" onSubmit={handleSubmit}>
+    <form key="register" className="signin-card" onSubmit={handleSubmit}>
       <p className="eyebrow">WELCOME</p>
       <h2>{title}</h2>
       <p className="intro">{intro}</p>
