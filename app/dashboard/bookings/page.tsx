@@ -9,6 +9,7 @@ import {
   type OwnerBlock,
   type OwnerBooking,
 } from "@/lib/ownerBookings";
+import { PLATFORM_COMMISSION_PERCENT } from "@/lib/paystack";
 import { formatNaira } from "@/types/property";
 
 export const metadata = { title: "Bookings | Avenir" };
@@ -41,7 +42,10 @@ function BookingRow({ b, today }: { b: OwnerBooking; today: string }) {
         </span>
       </div>
       <div className="owner-booking-side">
-        <strong>{formatNaira(b.amount)}</strong>
+        <strong>You receive {formatNaira(b.youReceive)}</strong>
+        <span className="owner-booking-paid">
+          Guest paid {formatNaira(b.amount)}
+        </span>
         {b.status === "pending_payment" ? (
           <span className="owner-booking-pill owner-booking-pill-wait">
             Awaiting payment
@@ -129,6 +133,13 @@ export default async function OwnerBookingsPage() {
           <span>Past stays</span>
         </div>
       </div>
+
+      <p className="owner-fee-notice">
+        Avenir keeps {PLATFORM_COMMISSION_PERCENT}% of the stay price as its
+        service commission. Guests pay the payment processing fee on top, so you
+        receive the stay price minus {PLATFORM_COMMISSION_PERCENT}%. Payouts
+        reach your bank on the next business day after payment.
+      </p>
 
       {listings.length === 0 ? (
         <div className="dashboard-empty">

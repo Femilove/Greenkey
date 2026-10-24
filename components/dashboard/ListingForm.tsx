@@ -5,12 +5,18 @@ import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { CITIES, MAX_PHOTOS, type Property } from "@/types/property";
 
 interface Props {
+  commissionPercent?: number; // Avenir's cut, shown so owners know what they will earn
   mode: "create" | "edit";
   id?: string;
   initial?: Property;
 }
 
-export default function ListingForm({ mode, id, initial }: Props) {
+export default function ListingForm({
+  mode,
+  id,
+  initial,
+  commissionPercent,
+}: Props) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(initial?.name ?? "");
@@ -175,6 +181,21 @@ export default function ListingForm({ mode, id, initial }: Props) {
             onChange={(e) => setDiscount(e.target.value)}
           />
         </label>
+
+        {commissionPercent ? (
+          <p className="owner-fee-notice listing-form-wide">
+            Avenir keeps {commissionPercent}% of each booking's stay price.
+            Guests pay the payment processing fee on top, so you receive{" "}
+            {100 - commissionPercent}% of the price you set.
+            {Number(price) > 0 &&
+              (() => {
+                const night = Math.round(
+                  Number(price) * (1 - (Number(discount) || 0) / 100),
+                );
+                return ` For example, a night at NGN ${night.toLocaleString("en-NG")} pays you NGN ${(night - Math.round((night * commissionPercent) / 100)).toLocaleString("en-NG")}.`;
+              })()}
+          </p>
+        ) : null}
 
         <label className="listing-form-field">
           City

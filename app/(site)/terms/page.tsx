@@ -1,6 +1,7 @@
 import Link from "next/link";
 import LegalPage from "@/components/LegalPage";
 import { LEGAL } from "@/lib/legal";
+import { PLATFORM_COMMISSION_PERCENT } from "@/lib/paystack";
 
 export const metadata = {
   title: `Terms of Service | ${LEGAL.siteName}`,
@@ -63,8 +64,11 @@ export default function TermsPage() {
           limits any right you have under applicable law.
         </li>
         <li>
-          We charge a service commission on each booking. It is deducted
-          automatically and the remainder is paid to the host.
+          We charge hosts a service commission of {PLATFORM_COMMISSION_PERCENT}%
+          of the stay price on each booking. It is deducted automatically and
+          the remainder is paid to the host. Guests pay a payment processing fee
+          on top of the stay price. It is shown before they pay and is not part
+          of the host&apos;s earnings.
         </li>
       </ul>
 

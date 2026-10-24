@@ -55,6 +55,8 @@ export const initializeTransaction = (input: {
   amountNaira: number;
   reference: string;
   subaccountCode: string;
+  /** Avenir's flat share in NGN (commission + the processing fee the guest paid). The owner gets everything else. */
+  platformShareNaira: number;
   callbackUrl: string;
   metadata?: Record<string, unknown>;
 }) =>
@@ -65,7 +67,10 @@ export const initializeTransaction = (input: {
       amount: Math.round(input.amountNaira * 100), // Paystack expects kobo
       reference: input.reference,
       subaccount: input.subaccountCode,
-      bearer: "subaccount", // the owner's share absorbs the Paystack transaction fee, not your commission
+      // The guest already paid the Paystack fee on top, so Avenir covers it out of its flat share
+      // (transaction_charge overrides the subaccount's percentage). The owner gets total minus that share.
+      transaction_charge: Math.round(input.platformShareNaira * 100),
+      bearer: "account",
       callback_url: input.callbackUrl,
       metadata: input.metadata,
     }),

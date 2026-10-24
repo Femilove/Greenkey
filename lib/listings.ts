@@ -222,6 +222,7 @@ export interface BookingWithListing {
   guests: number;
   status: "pending_payment" | "confirmed" | "cancelled";
   amount: number;
+  serviceFee: number; // the processing fee included in `amount` (0 on older bookings)
   createdAt: string;
   listing: { id: string; name: string; image: string; imageAlt?: string; location: Property["location"] } | null;
 }
@@ -244,6 +245,7 @@ export async function getUserBookings(userId: string): Promise<BookingWithListin
       checkOut: b.checkOut,
       guests: b.guests,
       amount: b.amount ?? 0, // older bookings may predate the amount field
+      serviceFee: b.serviceFee ?? 0,
       status: b.status,
       createdAt: b.createdAt.toISOString(),
       listing: listing ? { id: String(listing._id), name: listing.name, image: listing.image, imageAlt: listing.imageAlt, location: listing.location } : null,

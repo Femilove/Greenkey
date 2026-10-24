@@ -106,6 +106,12 @@ export default async function BookingsPage() {
                         · {b.guests} {b.guests === 1 ? "guest" : "guests"} ·{" "}
                         {formatNaira(b.amount)}
                       </p>
+                      {b.serviceFee > 0 && (
+                        <p className="booking-meta">
+                          Includes {formatNaira(b.serviceFee)} payment
+                          processing fee
+                        </p>
+                      )}
                     </div>
 
                     <div className="booking-card-side">

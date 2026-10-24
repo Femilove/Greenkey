@@ -1,14 +1,18 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { guestServiceFee } from "@/lib/fees";
+import { formatNaira, nightsBetween } from "@/types/property";
 
 export default function BookingForm({
   listingId,
   maxGuests,
+  nightlyPrice,
   isLoggedIn = false,
 }: {
   listingId: string;
   maxGuests: number;
+  nightlyPrice: number; // per night after any discount
   isLoggedIn?: boolean;
 }) {
   const [checkIn, setCheckIn] = useState("");
@@ -19,6 +23,13 @@ export default function BookingForm({
   const [status, setStatus] = useState("");
   const [pending, setPending] = useState(false);
   const today = new Date().toISOString().slice(0, 10);
+  const nights =
+    checkIn && checkOut && checkOut > checkIn
+      ? nightsBetween(checkIn, checkOut)
+      : 0;
+  const subtotal = nights * nightlyPrice;
+  const serviceFee = guestServiceFee(subtotal);
+  const total = subtotal + serviceFee;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -106,12 +117,35 @@ export default function BookingForm({
           />
         </label>
       </div>
+      {nights > 0 && (
+        <dl className="booking-summary" aria-label="Price summary">
+          <div>
+            <dt>
+              {formatNaira(nightlyPrice)} x {nights}{" "}
+              {nights === 1 ? "night" : "nights"}
+            </dt>
+            <dd>{formatNaira(subtotal)}</dd>
+          </div>
+          <div>
+            <dt>Payment processing fee</dt>
+            <dd>{formatNaira(serviceFee)}</dd>
+          </div>
+          <div className="booking-summary-total">
+            <dt>Total</dt>
+            <dd>{formatNaira(total)}</dd>
+          </div>
+        </dl>
+      )}
       <p className="booking-no-refunds">
         No refunds. Payments are final once made.
       </p>
       {isLoggedIn ? (
         <button className="listing-book" type="submit" disabled={pending}>
-          {pending ? "Redirecting to payment…" : "Book & pay now"}
+          {pending
+            ? "Redirecting to payment…"
+            : nights > 0
+              ? `Book & pay ${formatNaira(total)}`
+              : "Book & pay now"}
         </button>
       ) : (
         <div className="booking-signin">

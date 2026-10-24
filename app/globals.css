@@ -647,3 +647,13 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.12; }
   .owner-block-note { grid-column: auto; }
   .owner-block-fields button { grid-column: auto; }
 }
+
+/* Guest price summary and owner fee notices */
+.booking-summary { margin: 14px 0 4px; padding: 12px 14px; background: #f6f8f5; border: 1px solid #dde6da; display: flex; flex-direction: column; gap: 6px; font-size: .92rem; }
+.booking-summary div { display: flex; justify-content: space-between; gap: 12px; }
+.booking-summary dt, .booking-summary dd { margin: 0; }
+.booking-summary dd { font-weight: 600; white-space: nowrap; }
+.booking-summary-total { margin-top: 4px; padding-top: 8px; border-top: 1px solid #cfd9cc; font-weight: 800; font-size: 1rem; }
+.owner-fee-notice { margin: 0 0 20px; padding: 12px 14px; background: #f1f6ef; border-left: 4px solid #5f815d; font-size: .88rem; line-height: 1.5; color: #2f3d34; }
+.listing-form-wide { grid-column: 1 / -1; margin: 0; }
+.owner-booking-paid { font-size: .78rem; color: #52616b; font-weight: 600; }

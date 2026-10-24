@@ -4,6 +4,7 @@ import BlockedDate from "@/models/BlockedDate";
 import Booking, { type IBooking } from "@/models/Booking";
 import Listing from "@/models/Listing";
 import "@/models/User"; // registers the User model so populate("user") works
+import { paystackFee } from "@/lib/fees";
 import { nightsBetween } from "@/types/property";
 
 export interface OwnerBooking {
@@ -15,6 +16,7 @@ export interface OwnerBooking {
   guests: number;
   guestEmail: string;
   amount: number; // total the guest paid, NGN
+  youReceive: number; // what reaches the owner's bank for this stay, NGN
   status: "confirmed" | "pending_payment";
 }
 
@@ -46,6 +48,12 @@ export async function getOwnerBookings(ownerId: string): Promise<OwnerBooking[]>
     guests: b.guests,
     guestEmail: b.user?.email ?? "Guest",
     amount: b.amount ?? 0,
+    // New bookings: the guest paid the processing fee on top, so the owner gets the stay price minus
+    // our commission. Older bookings: the owner bore the Paystack fee out of their share.
+    youReceive:
+      b.subtotal != null
+        ? b.subtotal - (b.commission ?? 0)
+        : Math.max(0, (b.amount ?? 0) - (b.commission ?? 0) - Math.round(paystackFee(b.amount ?? 0))),
     status: b.status as "confirmed" | "pending_payment",
   }));
 }

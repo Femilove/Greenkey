@@ -59,6 +59,7 @@ export default async function ListingPage({
       <BookingForm
         listingId={property.id}
         maxGuests={property.maxGuests ?? 1}
+        nightlyPrice={discountedPrice(property)}
         isLoggedIn={!!session?.user}
       />
     </article>

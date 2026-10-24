@@ -9,7 +9,9 @@ export interface IBooking {
   status: "pending_payment" | "confirmed" | "cancelled";
   // Money fields are set once, at checkout time — never recomputed from the live
   // listing price later, so a price change afterwards can't alter a past booking.
-  amount: number; // total paid, in NGN (naira, not kobo)
+  amount: number; // total the GUEST paid, in NGN (naira, not kobo): subtotal + serviceFee
+  subtotal?: number; // the stay price before fees (older bookings don't have this)
+  serviceFee?: number; // the payment processing fee the guest paid on top
   commission: number; // the platform's cut, in NGN
   paystackReference: string;
   // Set when a late payment clashed with other dates: the booking was not confirmed and the guest must be refunded.
@@ -25,6 +27,8 @@ const BookingSchema = new Schema<IBooking>(
     guests: { type: Number, default: 1, min: 1 },
     status: { type: String, enum: ["pending_payment", "confirmed", "cancelled"], default: "pending_payment", index: true },
     amount: { type: Number, required: true },
+    subtotal: { type: Number },
+    serviceFee: { type: Number },
     commission: { type: Number, required: true, default: 0 },
     paystackReference: { type: String, required: true, unique: true },
     refundNeeded: { type: Boolean, default: false },

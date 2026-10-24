@@ -7,6 +7,7 @@ import { appUrl } from "@/lib/appUrl";
 import { getBookedRanges, getListingForCheckout, isListingAvailable } from "@/lib/listings";
 import { initializeTransaction, PLATFORM_COMMISSION_PERCENT } from "@/lib/paystack";
 import Booking from "@/models/Booking";
+import { commissionOf, guestServiceFee } from "@/lib/fees";
 import { discountedPrice, ISO_DATE, nightsBetween } from "@/types/property";
 
 /** The signed-in user's own bookings, soonest check-in first. */
@@ -72,15 +73,17 @@ export async function POST(req: Request) {
   }
 
   const nights = nightsBetween(checkIn, checkOut);
-  const amount = discountedPrice(listing) * nights;
-  const commission = Math.round(amount * (PLATFORM_COMMISSION_PERCENT / 100));
+  const subtotal = discountedPrice(listing) * nights; // the stay price the owner is paid from
+  const serviceFee = guestServiceFee(subtotal); // the guest pays Paystack's charge on top
+  const amount = subtotal + serviceFee; // what the guest is charged
+  const commission = commissionOf(subtotal, PLATFORM_COMMISSION_PERCENT);
   const reference = `Avenir_${randomUUID().replace(/-/g, "")}`;
 
   await connectDB();
   // Created as "pending_payment" so the dates are soft-held — see isListingAvailable — while the guest pays.
   const created = await Booking.create({
     listing: listingId, user: session.user.id, checkIn, checkOut, guests,
-    amount, commission, paystackReference: reference, status: "pending_payment",
+    subtotal, serviceFee, amount, commission, paystackReference: reference, status: "pending_payment",
   });
 
   // Two guests can pass the availability check above at the same moment. Whoever's booking was
@@ -107,6 +110,7 @@ export async function POST(req: Request) {
       amountNaira: amount,
       reference,
       subaccountCode: ownerSubaccountCode,
+      platformShareNaira: commission + serviceFee,
       callbackUrl: `${appUrl(req)}/bookings/callback`,
       metadata: { listingId, ownerEmail },
     });

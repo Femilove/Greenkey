@@ -26,7 +26,12 @@ export async function POST(req: Request) {
       // Idempotent: a webhook can legitimately be sent more than once for the same event.
       // Only confirm if the amount paid matches the booking total (Paystack reports kobo).
       const paidKobo = Number(event.data?.amount);
-      const booking = await Booking.findOne({ paystackReference: reference, status: "pending_payment" });
+      // A booking wrongly marked cancelled while its payment was still going through is recovered here too.
+      const booking = await Booking.findOne({
+        paystackReference: reference,
+        status: { $in: ["pending_payment", "cancelled"] },
+        refundNeeded: { $ne: true },
+      });
       if (booking && paidKobo >= Math.round(booking.amount * 100)) {
         await confirmPaidBooking(booking);
       } else if (booking) {

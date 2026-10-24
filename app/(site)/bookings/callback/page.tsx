@@ -45,16 +45,8 @@ export default async function BookingCallbackPage({
   if (booking.status === "cancelled" && booking.refundNeeded) {
     return <RefundResult />;
   }
-  if (booking.status === "cancelled") {
-    return (
-      <Result
-        title="Payment not completed"
-        message="This booking was cancelled."
-      />
-    );
-  }
-
-  // Still pending_payment: ask Paystack directly rather than making the guest wait on the webhook.
+  // Pending (or cancelled by mistake while the payment was still going through): ask Paystack
+  // directly rather than making the guest wait on the webhook. A payment that did succeed wins.
   try {
     const result = await verifyTransaction(reference);
     if (
@@ -77,12 +69,30 @@ export default async function BookingCallbackPage({
         />
       );
     }
-    booking.status = "cancelled";
-    await booking.save();
+    if (booking.status === "cancelled") {
+      return (
+        <Result
+          title="Payment not completed"
+          message="This booking was cancelled."
+        />
+      );
+    }
+    if (result.status === "failed") {
+      booking.status = "cancelled";
+      await booking.save();
+      return (
+        <Result
+          title="Payment not completed"
+          message="Your payment wasn't successful, so this booking wasn't made. You haven't been charged."
+        />
+      );
+    }
+    // Anything else (abandoned, or a bank transfer Paystack hasn't received yet) is NOT a failure:
+    // leave the booking waiting. If the money arrives a moment later, the webhook confirms it.
     return (
       <Result
-        title="Payment not completed"
-        message="Your payment wasn't successful, so this booking wasn't made. You haven't been charged."
+        title="We haven't received your payment yet"
+        message="If you've already paid, give it a few minutes. Your booking will appear under Upcoming stays as soon as the payment is confirmed. If you didn't finish paying, you can book again."
       />
     );
   } catch {

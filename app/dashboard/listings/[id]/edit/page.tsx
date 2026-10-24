@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import ListingForm from "@/components/dashboard/ListingForm";
 import { getOwnedListing } from "@/lib/listings";
+import { PLATFORM_COMMISSION_PERCENT } from "@/lib/paystack";
 
 export const metadata = { title: "Edit listing | Avenir" };
 
@@ -20,7 +21,12 @@ export default async function EditListingPage({
   return (
     <div className="dashboard-page">
       <h1>Edit listing</h1>
-      <ListingForm mode="edit" id={listing.id} initial={listing} />
+      <ListingForm
+        mode="edit"
+        id={listing.id}
+        initial={listing}
+        commissionPercent={PLATFORM_COMMISSION_PERCENT}
+      />
     </div>
   );
 }
