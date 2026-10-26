@@ -565,7 +565,7 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.12; }
 /* Laptop/desktop only: zoom out so the whole photo is visible instead of being cropped */
 @media (min-width: 641px) {
   .photo-gallery { background: #18222d; }
-  .listing-page .photo-gallery img.photo-gallery-image { aspect-ratio: 16 / 9; max-height: 550px; object-fit: fill; }
+  .listing-page .photo-gallery img.photo-gallery-image { aspect-ratio: 16 / 9; max-height: 550px; object-fit: contain; }
 }
 
 /* ---- Sign-up email code step ---- */
