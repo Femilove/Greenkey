@@ -171,11 +171,16 @@ export async function getListingForCheckout(id: string) {
   await connectDB();
   const doc = await Listing.findOne({ _id: id, status: "approved" }).populate(
     "owner",
-    "paystackSubaccountCode email"
+    "paystackSubaccountCode email commissionPercent"
   );
   if (!doc) return null;
-  const owner = doc.owner as unknown as { _id: unknown; paystackSubaccountCode?: string; email: string };
-  return { listing: doc, ownerSubaccountCode: owner.paystackSubaccountCode, ownerEmail: owner.email };
+  const owner = doc.owner as unknown as { _id: unknown; paystackSubaccountCode?: string; email: string; commissionPercent?: number };
+  return {
+    listing: doc,
+    ownerSubaccountCode: owner.paystackSubaccountCode,
+    ownerEmail: owner.email,
+    ownerCommissionPercent: owner.commissionPercent, // undefined = use the site-wide rate
+  };
 }
 
 /** Validates create/update bodies. Returns clean data or an error message. */

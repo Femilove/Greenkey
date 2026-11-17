@@ -20,6 +20,7 @@ export default async function AdminLayout({
           <Link href="/admin">Pending listings</Link>
           <Link href="/admin?status=approved">Live listings</Link>
           <Link href="/admin?status=rejected">Rejected listings</Link>
+          <Link href="/admin/owners">Owners and rates</Link>
         </nav>
         <Link className="dashboard-exit" href="/">
           &larr; Back to Avenir

@@ -48,7 +48,7 @@ export async function POST(req: Request) {
 
   const checkout = await getListingForCheckout(listingId);
   if (!checkout) return NextResponse.json({ error: "This home is not available for booking." }, { status: 404 });
-  const { listing, ownerSubaccountCode, ownerEmail } = checkout;
+  const { listing, ownerSubaccountCode, ownerEmail, ownerCommissionPercent } = checkout;
 
   if (!ownerSubaccountCode) {
     return NextResponse.json({ error: "This home's host hasn't finished setting up payouts yet. Try another listing." }, { status: 409 });
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
   const subtotal = discountedPrice(listing) * nights; // the stay price the owner is paid from
   const serviceFee = guestServiceFee(subtotal); // the guest pays Paystack's charge on top
   const amount = subtotal + serviceFee; // what the guest is charged
-  const commission = commissionOf(subtotal, PLATFORM_COMMISSION_PERCENT);
+  const commission = commissionOf(subtotal, ownerCommissionPercent ?? PLATFORM_COMMISSION_PERCENT); // this owner's own rate, if the admin set one
   const reference = `Avenir_${randomUUID().replace(/-/g, "")}`;
 
   await connectDB();
