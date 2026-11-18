@@ -1,9 +1,16 @@
 import PayoutForm from "@/components/dashboard/PayoutForm";
-import { PLATFORM_COMMISSION_PERCENT } from "@/lib/paystack";
+import { auth } from "@/auth";
+import { getOwnerCommissionPercent } from "@/lib/commission";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Payout details | Avenir" };
 
-export default function PayoutPage() {
+export default async function PayoutPage() {
+  const session = await auth();
+  const PLATFORM_COMMISSION_PERCENT = session?.user
+    ? await getOwnerCommissionPercent(session.user.id)
+    : 0; // this owner's own rate
   return (
     <div className="dashboard-page">
       <h1>Payout details</h1>

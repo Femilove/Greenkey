@@ -9,7 +9,7 @@ import {
   type OwnerBlock,
   type OwnerBooking,
 } from "@/lib/ownerBookings";
-import { PLATFORM_COMMISSION_PERCENT } from "@/lib/paystack";
+import { getOwnerCommissionPercent } from "@/lib/commission";
 import { formatNaira } from "@/types/property";
 
 export const metadata = { title: "Bookings | Avenir" };
@@ -97,6 +97,9 @@ export default async function OwnerBookingsPage() {
     ? await getOwnerBookings(ownerId)
     : [];
   const blocks: OwnerBlock[] = ownerId ? await getOwnerBlocks(ownerId) : [];
+  const PLATFORM_COMMISSION_PERCENT = ownerId
+    ? await getOwnerCommissionPercent(ownerId)
+    : 0; // this owner's own rate
 
   const today = new Date().toISOString().slice(0, 10);
   const isPast = (b: OwnerBooking) => b.checkOut <= today;

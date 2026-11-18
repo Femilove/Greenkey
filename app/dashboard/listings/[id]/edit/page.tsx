@@ -2,7 +2,9 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import ListingForm from "@/components/dashboard/ListingForm";
 import { getOwnedListing } from "@/lib/listings";
-import { PLATFORM_COMMISSION_PERCENT } from "@/lib/paystack";
+import { getOwnerCommissionPercent } from "@/lib/commission";
+
+export const dynamic = "force-dynamic"; // always read the owner's current rate
 
 export const metadata = { title: "Edit listing | Avenir" };
 
@@ -17,6 +19,7 @@ export default async function EditListingPage({
     ? await getOwnedListing(id, session.user.id)
     : null;
   if (!listing) notFound();
+  const commissionPercent = await getOwnerCommissionPercent(session!.user.id);
 
   return (
     <div className="dashboard-page">
@@ -25,7 +28,7 @@ export default async function EditListingPage({
         mode="edit"
         id={listing.id}
         initial={listing}
-        commissionPercent={PLATFORM_COMMISSION_PERCENT}
+        commissionPercent={commissionPercent}
       />
     </div>
   );
